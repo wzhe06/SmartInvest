@@ -1,27 +1,24 @@
 __author__ = 'Wang Zhe'
 
 loan_years = 30
+loan = 40
+cash = 10
+financial_yearly_return_rate = 0.05
+lending_yearly_rate = 0.04067
+monthly_income = 0.5
 
-cash = 50
-loan = 100
+financial_monthly_return_rate = financial_yearly_return_rate / 12
+lending_monthly_rate = lending_yearly_rate / 12
 
-financial_return_rate = 0.04 / 12
-lending_rate = 0.04067 / 12
+monthly_repayment = float(loan) * lending_monthly_rate * ((1 + lending_monthly_rate) ** (12 * loan_years)) / \
+    ((1 + lending_monthly_rate) ** (12 * loan_years) - 1)
 
-monthly_income = 1
-
-monthly_repayment = float(loan) * lending_rate * ((1 + lending_rate) ** (12 * loan_years)) / \
-    ((1 + lending_rate) ** (12 * loan_years) - 1)
-
-print "Monthly repayment:\t", round(monthly_repayment * 10000, 2), "RMB"
-
-
+print "Monthly repayment:\t", round(monthly_repayment, 4), "* 10000 RMB"
 
 last_month_cash = cash
-for this_year in range(1,loan_years):
-    for this_month in range(1, 12):
-        last_month_cash = last_month_cash * (1 + financial_return_rate) + monthly_income - monthly_repayment
+for this_month in range(0, 12 * loan_years):
+    last_month_cash = last_month_cash * (1 + financial_monthly_return_rate) + monthly_income - monthly_repayment
 
-print loan_years, "years later, your cash:\t", last_month_cash, " wan RMB"
+print loan_years, "years later, your cash:\t", round(last_month_cash, 2), "* 10000 RMB"
 
 
