@@ -25,7 +25,7 @@ Monthly repayment:	0.1444 * 10000 RMB
 30 years later, your cash:	179.54 * 10000 RMB
 
 # Example
-输入
+        输入
         贷款30年
         loan_years = 30
         贷款40万人民币
@@ -39,7 +39,7 @@ Monthly repayment:	0.1444 * 10000 RMB
         每个月扣除生活开销，不扣除房贷的收入是0.5万元
         monthly_income = 0.5
 
-输出
+        输出
         Monthly repayment:	0.1925 * 10000 RMB
         30 years later, your cash:	300.58 * 10000 RMB
 
