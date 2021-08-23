@@ -70,11 +70,11 @@ t2 = 5 # 每月持仓交易截止日，从1起
 # 回测
 df = index_data.loc[start_date:end_date,[index_id]]
 df['index_ret'] = df[index_id].pct_change()
-df['index'] = (1+df['index_ret']).cumprod()
+df['index'] = (1+df['index_ret']).cumprod().fillna(1)
 df['date_count_in_month'] = date_count_in_mouth(df.index)
 df['pos'] = [1 if (e>=t1 and e<=t2) else 0 for e in df['date_count_in_month']] # 昨收仓位
 df['stgy_ret'] = df['pos'] * df['index_ret']
-df['stgy'] = (1+df['stgy_ret']).cumprod()
+df['stgy'] = (1+df['stgy_ret']).cumprod().fillna(1)
 
 # 回测结果展示
 fig = plt.figure(figsize=(20,10))
