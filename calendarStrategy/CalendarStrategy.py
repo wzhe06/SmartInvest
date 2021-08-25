@@ -1,7 +1,13 @@
+__author__ = 'Teng Li'
+
+import datetime
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import datetime
+
+'''
+定义工具函数
+'''
 
 def get_drawdown(p):
     """
@@ -18,7 +24,7 @@ def get_drawdown(p):
 
 def cal_period_perf_indicator(adjnav):
     """
-    计算区间业绩指标:输入必须是日频净值
+    计算区间业绩指标
     """
 
     if type(adjnav) == pd.DataFrame:
@@ -29,8 +35,7 @@ def cal_period_perf_indicator(adjnav):
         return res
 
     ret = adjnav.pct_change()
-    # annret = np.nanmean(ret) * 242 # 单利
-    annret = (adjnav[-1] / 1) ** (242/len(adjnav)) - 1 # 复利
+    annret = np.nanmean(ret) * 242
     annvol = np.nanstd(ret) * np.sqrt(242)
     sr = annret / annvol
     dd = get_drawdown(adjnav)
@@ -39,9 +44,11 @@ def cal_period_perf_indicator(adjnav):
 
     return [annret, annvol, sr, mdd, calmar]
 
+
 def datestr2dtdate(datestr):
     # 日期格式转换：'yyyy-mm-dd'转为datetime.date
     return datetime.datetime.strptime(datestr, '%Y-%m-%d').date()
+
 
 def date_count_in_mouth(dates):
     # 计算日期序列中每个日期在所在月中的序数
@@ -56,16 +63,21 @@ def date_count_in_mouth(dates):
     return counts
 
 
+'''
+main
+'''
+
 # 从csv文件获取指数价格数据
-index_data = pd.read_csv('指数历史数据.csv').set_index('datetime')
+index_data = pd.read_csv('calendarStrategy/指数历史数据.csv').set_index('datetime')
 index_data.index = [datestr2dtdate(e) for e in index_data.index]
 
 # 设置回测参数
 index_id = 'hs300' # 标的指数：'hs300' or 'csi500' or 'csi1000'
 start_date = datetime.date(2012,1,1) # 回测起始日期
-end_date = datetime.date(2021,7,31) # 回测截止日期
+end_date = datetime.date(2021,7,27) # 回测截止日期
 t1 = 1  # 每月持仓交易起始日，从1起
 t2 = 5 # 每月持仓交易截止日，从1起
+
 
 # 回测
 df = index_data.loc[start_date:end_date,[index_id]]
@@ -77,10 +89,10 @@ df['stgy_ret'] = df['pos'] * df['index_ret']
 df['stgy'] = (1+df['stgy_ret']).cumprod()
 
 # 回测结果展示
-fig = plt.figure(figsize=(20,10))
+fig = plt.figure(figsize=(16,8))
 ax1 = fig.add_subplot(2,1,1)
 df.loc[:,['index','stgy']].plot(ax=ax1, grid=True, title='%s: t1=%d, t2=%d' % (index_id,t1,t2))
 ax2 = fig.add_subplot(2,1,2)
-df.loc[:,['pos']].plot(ax=ax2, grid=True) # 净值走势图
-res = cal_period_perf_indicator(df.loc[:,['index','stgy']]) # 业绩指标表格
+df.loc[:,['pos']].plot(ax=ax2, grid=True)
+res = cal_period_perf_indicator(df.loc[:,['index','stgy']])
 print(res)
